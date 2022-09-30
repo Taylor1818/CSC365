@@ -1,4 +1,5 @@
 import java.io.*;
+import java.lang.ProcessHandle.Info;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -29,48 +30,48 @@ public class schoolsearch {
         }
     }
 
-    private static void beginPrompt(List<Student> allStudents) {
-        Scanner keyboard = new Scanner(System.in);
+    private static void beginPrompt(List<Student> students) {
+        Scanner input = new Scanner(System.in);
         boolean cont = true;
         while (cont) {
-            System.out.println("Enter a query: ");
-            cont = analyzeQuery(keyboard.nextLine().split(" "), allStudents);
+            System.out.print("Enter a command: ");
+            cont = analyzecommand(input.nextLine().split(" "), students);
         }
     }
 
-    private static boolean analyzeQuery(String[] query, List<Student> allStudents) {
+    private static boolean analyzecommand(String[] command, List<Student> students) {
         try {
-            if (query.length > 0 && query.length < 4) {
-                if (query[0].equalsIgnoreCase("S:") || query[0].equalsIgnoreCase("Student:")) {
-                    student(allStudents, query[1], query.length == 3 ? query[2] : null);
-                } else if (query[0].equalsIgnoreCase("T:") || query[0].equalsIgnoreCase("Teacher:")) {
-                    teacher(allStudents, query[1]);
-                } else if (query[0].equalsIgnoreCase("B:") || query[0].equalsIgnoreCase("Bus:")) {
-                    bus(allStudents, query[1]);
-                } else if (query[0].equalsIgnoreCase("G:") || query[0].equalsIgnoreCase("Grade:")) {
-                    grade(allStudents, Integer.parseInt(query[1]), query.length == 3 ? query[2] : null);
-                } else if (query[0].equalsIgnoreCase("A:") || query[0].equalsIgnoreCase("Average:")) {
-                    average(allStudents, Integer.parseInt(query[1]));
-                } else if (query[0].equalsIgnoreCase("I") || query[0].equalsIgnoreCase("Info")) {
-                    info(allStudents);
-                } else if (query[0].equalsIgnoreCase("Q") || query[0].equalsIgnoreCase("Quit")) {
+            if (command.length > 0 && command.length < 4) {
+                if (command[0].equals("S:") || command[0].equals("Student:")) {
+                    student(students, command[1], command.length == 3 ? command[2] : null);
+                } else if (command[0].equals("T:") || command[0].equals("Teacher:")) {
+                    teacher(students, command[1]);
+                } else if (command[0].equals("B:") || command[0].equals("Bus:")) {
+                    bus(students, command[1]);
+                } else if (command[0].equals("G:") || command[0].equals("Grade:")) {
+                    grade(students, Integer.parseInt(command[1]), command.length == 3 ? command[2] : null);
+                } else if (command[0].equals("A:") || command[0].equals("Average:")) {
+                    average(students, Integer.parseInt(command[1]));
+                } else if (command[0].equals("I") || command[0].equals("Info")) {
+                    info(students);
+                } else if (command[0].equals("Q") || command[0].equals("Quit")) {
                     System.out.println("Exiting...");
                     return false;
                 } else
-                    System.out.println("Invalid Query, Please Re-Enter.");
+                    System.out.println("Invalid command, Please Re-Enter.");
             } else
-                System.out.println("Invalid Query, Please Re-Enter.");
+                System.out.println("Invalid command, Please Re-Enter.");
         } catch (Exception e) {
-            System.out.println("Invalid Query, Please Re-Enter.");
+            System.out.println("Invalid command, Please Re-Enter.");
         }
 
         return true;
     }
 
-    private static void student(List<Student> allStudents, String lastname, String bus) {
+    private static void student(List<Student> students, String lastname, String bus) {
         if (bus != null) {
-            if ((bus.equalsIgnoreCase("B") || bus.equalsIgnoreCase("Bus"))) {
-                allStudents.stream().filter(student -> student.getStLastName().equalsIgnoreCase(lastname))
+            if ((bus.equals("B") || bus.equals("Bus"))) {
+                students.stream().filter(student -> student.getStLastName().equals(lastname))
                         .forEach(student -> System.out.println(student.getStLastName()
                                 + " " + student.getStFirstName() + " " + student.getGrade() + " "
                                 + student.getClassroom()
@@ -78,34 +79,34 @@ public class schoolsearch {
             } else
                 throw new IllegalArgumentException();
         } else {
-            allStudents.stream().filter(student -> student.getStLastName().equalsIgnoreCase(lastname))
+            students.stream().filter(student -> student.getStLastName().equals(lastname))
                     .forEach(student -> System.out.println(student.getStLastName()
                             + " " + student.getStFirstName() + " " + student.getBus()));
         }
     }
 
-    private static void teacher(List<Student> allStudents, String teacherLastname) {
-        allStudents.stream().filter(student -> student.gettLastName().equalsIgnoreCase(teacherLastname))
+    private static void teacher(List<Student> students, String teacherLastname) {
+        students.stream().filter(student -> student.gettLastName().equals(teacherLastname))
                 .forEach(student -> System.out.println(student.getStLastName() + " " + student.getStFirstName()));
     }
 
-    private static void bus(List<Student> allStudents, String bus) {
-        allStudents.stream().filter(student -> student.getBus() == Integer.parseInt(bus))
+    private static void bus(List<Student> students, String bus) {
+        students.stream().filter(student -> student.getBus() == Integer.parseInt(bus))
                 .forEach(student -> System.out.println(student.getStLastName() + " " + student.getStFirstName() + " "
                         + student.getGrade() + " " + student.getClassroom()));
     }
 
-    private static void grade(List<Student> allStudents, int grade, String specifier) {
-        List<Student> gradeTargets = allStudents.stream().filter(student -> student.getGrade() == grade)
+    private static void grade(List<Student> students, int grade, String specifier) {
+        List<Student> gradeTargets = students.stream().filter(student -> student.getGrade() == grade)
                 .collect(Collectors.toList());
         if (specifier == null) {
             gradeTargets
                     .forEach(student -> System.out.println(student.getStLastName() + " " + student.getStFirstName()));
         } else {
             Student target = null;
-            if (specifier.equalsIgnoreCase("H") || specifier.equalsIgnoreCase("High")) {
+            if (specifier.equals("H") || specifier.equals("High")) {
                 target = Collections.max(gradeTargets, Comparator.comparing(Student::getGpa));
-            } else if (specifier.equalsIgnoreCase("L") || specifier.equalsIgnoreCase("Low")) {
+            } else if (specifier.equals("L") || specifier.equals("Low")) {
                 target = Collections.min(gradeTargets, Comparator.comparing(Student::getGpa));
             } else
                 throw new IllegalArgumentException();
@@ -116,18 +117,17 @@ public class schoolsearch {
         }
     }
 
-    private static void average(List<Student> allStudents, int gradeTarget) {
-        System.out.println(gradeTarget + " " + allStudents.stream().filter(student -> student.getGrade() == gradeTarget)
+    private static void average(List<Student> students, int gradeTarget) {
+        System.out.println(gradeTarget + " " + students.stream().filter(student -> student.getGrade() == gradeTarget)
                 .mapToDouble(Student::getGpa).average());
     }
 
-    private static void info(List<Student> allStudents) {
+    private static void info(List<Student> students) {
         int[] counts = new int[7];
-        allStudents.forEach(student -> counts[student.getGrade()]++);
+        students.forEach(student -> counts[student.getGrade()]++);
         for (int i = 0; i < counts.length; i++)
             System.out.println(i + ": " + counts[i]);
     }
-
 }
 
 class Student {
@@ -182,12 +182,5 @@ class Student {
 
     public String gettFirstName() {
         return TFirstName;
-    }
-
-    @Override
-    public String toString() {
-        return "Lastname: " + this.StLastName + ", Firstname: " + this.StFirstName + ", Grade: " + this.Grade
-                + ", Classroom: " + this.Classroom + ", Bus: " + this.Bus + ", GPA: " + this.GPA +
-                ", tLastName: " + TLastName + ", tFirstName: " + this.TFirstName;
     }
 }

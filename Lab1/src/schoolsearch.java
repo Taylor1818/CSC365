@@ -1,5 +1,4 @@
 import java.io.*;
-import java.lang.ProcessHandle.Info;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -58,11 +57,11 @@ public class schoolsearch {
                     System.out.println("Exiting...");
                     return false;
                 } else
-                    System.out.println("Invalid command, Please Re-Enter.");
+                    System.out.println("Please enter a valid input.");
             } else
-                System.out.println("Invalid command, Please Re-Enter.");
+                System.out.println("Please enter a valid input.");
         } catch (Exception e) {
-            System.out.println("Invalid command, Please Re-Enter.");
+            System.out.println("Please enter a valid input.");
         }
 
         return true;
@@ -72,16 +71,16 @@ public class schoolsearch {
         if (bus != null) {
             if ((bus.equals("B") || bus.equals("Bus"))) {
                 students.stream().filter(student -> student.getStLastName().equals(lastname))
-                        .forEach(student -> System.out.println(student.getStLastName()
-                                + " " + student.getStFirstName() + " " + student.getGrade() + " "
-                                + student.getClassroom()
-                                + " " + student.gettLastName() + " " + student.gettFirstName()));
+                    .forEach(student -> System.out.println(student.getStLastName()
+                            + " " + student.getStFirstName() + " " + student.getBus()));
             } else
                 throw new IllegalArgumentException();
         } else {
             students.stream().filter(student -> student.getStLastName().equals(lastname))
-                    .forEach(student -> System.out.println(student.getStLastName()
-                            + " " + student.getStFirstName() + " " + student.getBus()));
+                        .forEach(student -> System.out.println(student.getStLastName()
+                                + " " + student.getStFirstName() + " " + student.getGrade() + " "
+                                + student.getClassroom()
+                                + " " + student.gettLastName() + " " + student.gettFirstName()));
         }
     }
 
